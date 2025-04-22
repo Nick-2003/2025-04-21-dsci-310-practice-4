@@ -7,18 +7,20 @@ Options:
 
 " -> doc
 
+# Load required libraries
 library(docopt)
-library(tidyverse)
 library(palmerpenguins)
-library(tidymodels)
-library(regexcite20250416) # REPLACE WITH OWN LIBRARY
+library(tidyr)
+library(readr)
 
-opt <- docopt::docopt(doc)
+# Parse command line arguments
+opt <- docopt(doc)
 
+# Load data
 data <- penguins
 
 # Initial cleaning: Remove missing values
 data <- data %>% drop_na()
 
-# Save data to data folder
-readr::write_csv(data, opt$output_path) # work/data/raw/penguins.csv
+# Save cleaned data to specified path
+write_csv(data, opt$output_path) # work/data/raw/penguins.csv

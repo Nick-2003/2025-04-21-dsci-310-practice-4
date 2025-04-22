@@ -1,0 +1,4 @@
+Function,Output
+regexcite20250416::is_leap(2000),1
+regexcite20250416::is_leap(1900),0
+"regexcite20250416::temp_conv(41, 'F', 'C')",5

@@ -10,25 +10,28 @@ Options:
 " -> doc
 
 library(docopt)
+library(dplyr)
+library(ggplot2)
+library(readr)
 
 opt <- docopt::docopt(doc)
 
 data <- readr::read_csv(opt$input_path) # work/data/raw/penguins.csv
 
 # Summary statistics
-glimpse(data)
+dplyr::glimpse(data)
 summary <- dplyr::summarise(data, mean_bill_length = mean(bill_length_mm), mean_bill_depth = mean(bill_depth_mm), mean_flipper_length = mean(flipper_length_mm), mean_body_mass = mean(body_mass_g))
 
 
 # Visualizations
-boxplot_viz <- ggplot(data, aes(x = species, y = bill_length_mm, fill = species)) +
-  geom_boxplot() +
-  theme_minimal()
+boxplot_viz <- ggplot2::ggplot(data, ggplot2::aes(x = species, y = bill_length_mm, fill = species)) +
+  ggplot2::geom_boxplot() +
+  ggplot2::theme_minimal()
 
 # Prepare data for modeling
 data <- data %>%
-  select(species, bill_length_mm, bill_depth_mm, flipper_length_mm, body_mass_g) %>%
-  mutate(species = as.factor(species))
+  dplyr::select(species, bill_length_mm, bill_depth_mm, flipper_length_mm, body_mass_g) %>%
+  dplyr::mutate(species = as.factor(species))
 
 # Save data to data folder
 readr::write_csv(summary, opt$output_path_summary) # work/output/summary.csv

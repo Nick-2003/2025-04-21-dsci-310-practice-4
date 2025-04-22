@@ -11,33 +11,35 @@ Options:
 " -> doc
 
 library(docopt)
-library(tidyverse)
-library(palmerpenguins)
-library(tidymodels)
-library(regexcite20250416) # REPLACE WITH OWN LIBRARY
+library(readr)
+library(dplyr)
+library(rsample)
+library(parsnip)
+library(workflows)
 
 opt <- docopt::docopt(doc)
 
-data <- readr::read_csv(opt$input_path) # work/data/processed/penguins_cleaned.csv
+data <- readr::read_csv(opt$input_path) %>%
+  dplyr::mutate(species = as.factor(species)) # work/data/processed/penguins_cleaned.csv
 
-# Split data
+# Split data into training and testing sets
 set.seed(123)
-data_split <- initial_split(data, strata = species)
-train_data <- training(data_split)
-test_data <- testing(data_split)
+data_split <- rsample::initial_split(data, strata = species)
+train_data <- rsample::training(data_split)
+test_data  <- rsample::testing(data_split)
 
-# Define model
-penguin_model <- nearest_neighbor(mode = "classification", neighbors = 5) %>%
-  set_engine("kknn")
+# Define k-NN classification model
+penguin_model <- parsnip::nearest_neighbor(mode = "classification", neighbors = 5) %>%
+  parsnip::set_engine("kknn")
 
 # Create workflow
-penguin_workflow <- workflow() %>%
-  add_model(penguin_model) %>%
-  add_formula(species ~ .)
+penguin_workflow <- workflows::workflow() %>%
+  workflows::add_model(penguin_model) %>%
+  workflows::add_formula(species ~ .)
 
-# Fit model
+# Fit model on training data
 penguin_fit <- penguin_workflow %>%
-  fit(data = train_data)
+  parsnip::fit(data = train_data)
 
 # Save data to data folder
 readr::write_csv(train_data, opt$output_path_train) # work/data/processed/penguins_train.csv

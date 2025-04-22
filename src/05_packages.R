@@ -8,10 +8,8 @@ Options:
 " -> doc
 
 library(docopt)
-library(tidyverse)
-library(palmerpenguins)
-library(tidymodels)
-library(regexcite20250416) # REPLACE WITH OWN LIBRARY
+library(readr)
+library(regexcite20250416)
 
 opt <- docopt::docopt(doc)
 
@@ -19,6 +17,7 @@ opt <- docopt::docopt(doc)
 calls <- c("regexcite20250416::is_leap(2000)", 
            "regexcite20250416::is_leap(1900)", 
            "regexcite20250416::temp_conv(41, 'F', 'C')")
+
 
 # Evaluate each safely
 outputs <- sapply(calls, function(call) {
@@ -29,7 +28,7 @@ outputs <- sapply(calls, function(call) {
   })
 })
 
-# Create dataframe
+# Create a dataframe of function call and result
 func_outputs <- data.frame(
   Function = calls,
   Output = outputs,
